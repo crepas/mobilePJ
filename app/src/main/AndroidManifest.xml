@@ -15,21 +15,27 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyTripPlanner"
         tools:targetApi="31">
+
+        <!-- 로그인 화면 (앱 시작점) -->
         <activity
-            android:name=".SignUpActivity"
-            android:exported="false" />
-        <activity
-            android:name=".HomeActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 회원가입 화면 -->
+        <activity
+            android:name=".SignUpActivity"
+            android:exported="false" />
+
+        <!-- 메인 네비게이션 화면 -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>
