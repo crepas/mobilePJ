@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- 헤더 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#FFFFFF"
+            android:padding="20dp"
+            android:elevation="2dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:id="@+id/textViewChartTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📊 지출 분석 차트"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#2196F3"
+                android:layout_gravity="center"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:id="@+id/textViewTotalExpense"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="총 지출: ₩0"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_gravity="center" />
+
+        </LinearLayout>
+
+        <!-- 카테고리별 차트 제목 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📈 카테고리별 지출 비율"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="16dp" />
+
+        <!-- 간단한 원형 차트 (색상별 카테고리) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="24dp">
+
+            <!-- 숙박 -->
+            <TextView
+                android:id="@+id/textViewAccommodationChart"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:text="🏨 숙박\n₩0 (0%)"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:background="#FF5722"
+                android:gravity="center"
+                android:layout_marginBottom="8dp"
+                android:elevation="2dp" />
+
+            <!-- 교통 -->
+            <TextView
+                android:id="@+id/textViewTransportChart"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:text="🚗 교통\n₩0 (0%)"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:background="#2196F3"
+                android:gravity="center"
+                android:layout_marginBottom="8dp"
+                android:elevation="2dp" />
+
+            <!-- 식비 -->
+            <TextView
+                android:id="@+id/textViewFoodChart"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:text="🍽️ 식비\n₩0 (0%)"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:background="#4CAF50"
+                android:gravity="center"
+                android:layout_marginBottom="8dp"
+                android:elevation="2dp" />
+
+            <!-- 관광 -->
+            <TextView
+                android:id="@+id/textViewTourismChart"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:text="🎭 관광\n₩0 (0%)"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:background="#FF9800"
+                android:gravity="center"
+                android:layout_marginBottom="8dp"
+                android:elevation="2dp" />
+
+            <!-- 기타 -->
+            <TextView
+                android:id="@+id/textViewOtherChart"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:text="📦 기타\n₩0 (0%)"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:background="#9C27B0"
+                android:gravity="center"
+                android:layout_marginBottom="8dp"
+                android:elevation="2dp" />
+
+        </LinearLayout>
+
+        <!-- 차트 설명 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#FFFFFF"
+            android:padding="16dp"
+            android:elevation="2dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="💡 차트 설명"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#4CAF50"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="• 각 색상별 막대는 해당 카테고리의 지출 비율을 나타냅니다\n• 지출이 많은 카테고리일수록 진하게 표시됩니다\n• 백분율은 전체 지출 대비 각 카테고리의 비중입니다\n• 예산 관리에 참고하여 지출 계획을 세워보세요"
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:lineSpacingExtra="4dp" />
+
+        </LinearLayout>
+
+        <!-- 돌아가기 버튼 -->
+        <Button
+            android:id="@+id/buttonBackToBudget"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="← 예산 화면으로 돌아가기"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/button_background"
+            android:onClick="finish" />
+
+    </LinearLayout>
+
+</ScrollView>

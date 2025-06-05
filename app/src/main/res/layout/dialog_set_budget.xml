@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="#FFFFFF">
+
+    <!-- 헤더 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="💰 예산 설정"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#4CAF50"
+        android:layout_marginBottom="24dp"
+        android:layout_gravity="center" />
+
+    <!-- 전체 예산 설정 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="총 예산 (원)"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/editTextTotalBudget"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="예: 1000000"
+        android:inputType="number"
+        android:background="@drawable/edit_text_background"
+        android:padding="12dp"
+        android:layout_marginBottom="24dp" />
+
+    <!-- 카테고리별 예산 설정 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="📊 카테고리별 예산 분배"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="각 카테고리별로 예산을 분배하세요 (선택사항)"
+        android:textSize="12sp"
+        android:textColor="#999999"
+        android:layout_marginBottom="16dp" />
+
+    <!-- 숙박 예산 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🏨"
+            android:textSize="20sp"
+            android:layout_marginEnd="12dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="숙박"
+            android:textSize="14sp"
+            android:textColor="#333333" />
+
+        <EditText
+            android:id="@+id/editTextAccommodationBudget"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:hint="0"
+            android:inputType="number"
+            android:textSize="12sp"
+            android:background="@drawable/edit_text_background"
+            android:padding="8dp" />
+
+    </LinearLayout>
+
+    <!-- 교통 예산 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🚗"
+            android:textSize="20sp"
+            android:layout_marginEnd="12dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="교통"
+            android:textSize="14sp"
+            android:textColor="#333333" />
+
+        <EditText
+            android:id="@+id/editTextTransportBudget"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:hint="0"
+            android:inputType="number"
+            android:textSize="12sp"
+            android:background="@drawable/edit_text_background"
+            android:padding="8dp" />
+
+    </LinearLayout>
+
+    <!-- 식비 예산 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🍽️"
+            android:textSize="20sp"
+            android:layout_marginEnd="12dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="식비"
+            android:textSize="14sp"
+            android:textColor="#333333" />
+
+        <EditText
+            android:id="@+id/editTextFoodBudget"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:hint="0"
+            android:inputType="number"
+            android:textSize="12sp"
+            android:background="@drawable/edit_text_background"
+            android:padding="8dp" />
+
+    </LinearLayout>
+
+    <!-- 관광 예산 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🎭"
+            android:textSize="20sp"
+            android:layout_marginEnd="12dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="관광"
+            android:textSize="14sp"
+            android:textColor="#333333" />
+
+        <EditText
+            android:id="@+id/editTextTourismBudget"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:hint="0"
+            android:inputType="number"
+            android:textSize="12sp"
+            android:background="@drawable/edit_text_background"
+            android:padding="8dp" />
+
+    </LinearLayout>
+
+    <!-- 기타 예산 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📦"
+            android:textSize="20sp"
+            android:layout_marginEnd="12dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="기타"
+            android:textSize="14sp"
+            android:textColor="#333333" />
+
+        <EditText
+            android:id="@+id/editTextOtherBudget"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:hint="0"
+            android:inputType="number"
+            android:textSize="12sp"
+            android:background="@drawable/edit_text_background"
+            android:padding="8dp" />
+
+    </LinearLayout>
+
+    <!-- 예산 합계 표시 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#F5F5F5"
+        android:padding="12dp"
+        android:layout_marginBottom="24dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="카테고리 합계"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#333333" />
+
+        <TextView
+            android:id="@+id/textViewCategoryTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="₩0"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#2196F3" />
+
+    </LinearLayout>
+
+    <!-- 버튼들 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <Button
+            android:id="@+id/buttonCancelBudget"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="취소"
+            android:textSize="14sp"
+            android:background="@drawable/button_outline_background"
+            android:textColor="#666666"
+            android:paddingHorizontal="24dp"
+            android:layout_marginEnd="12dp" />
+
+        <Button
+            android:id="@+id/buttonSaveBudget"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="저장"
+            android:textSize="14sp"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/button_background"
+            android:paddingHorizontal="24dp" />
+
+    </LinearLayout>
+
+</LinearLayout>
