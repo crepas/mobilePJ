@@ -36,12 +36,7 @@
             android:name=".MainActivity"
             android:exported="false" />
 
-        <!-- 예산 차트 화면 -->
-        <activity
-            android:name=".BudgetChartActivity"
-            android:exported="false"
-            android:parentActivityName=".MainActivity"
-            android:label="지출 분석 차트" />
+
 
     </application>
 

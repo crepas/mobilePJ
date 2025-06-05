@@ -1,7 +1,10 @@
 package com.inhatc.mytripplanner;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.DatePickerDialog;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +40,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static android.content.Context.MODE_PRIVATE;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 
 public class BudgetFragment extends Fragment {
 
@@ -62,8 +71,10 @@ public class BudgetFragment extends Fragment {
     // 버튼들
     private Button buttonAddExpense;
     private Button buttonSetBudget;
-    private Button buttonViewChart;
     private Button buttonViewAllExpenses;
+
+    // 원형 차트 (MPAndroidChart)
+    private PieChart pieChart;
 
     // Firebase 및 사용자 정보
     private DatabaseReference database;
@@ -131,8 +142,11 @@ public class BudgetFragment extends Fragment {
         // 버튼들
         buttonAddExpense = view.findViewById(R.id.buttonAddExpense);
         buttonSetBudget = view.findViewById(R.id.buttonSetBudget);
-        buttonViewChart = view.findViewById(R.id.buttonViewChart);
         buttonViewAllExpenses = view.findViewById(R.id.buttonViewAllExpenses);
+
+        // 원형 차트
+        pieChart = view.findViewById(R.id.pieChart);
+        setupPieChart();
     }
 
     private void initCategoryExpenses() {
@@ -168,9 +182,6 @@ public class BudgetFragment extends Fragment {
 
         // 예산 설정 버튼
         buttonSetBudget.setOnClickListener(v -> showSetBudgetDialog());
-
-        // 차트 보기 버튼
-        buttonViewChart.setOnClickListener(v -> showExpenseChart());
 
         // 전체 지출 보기 버튼
         buttonViewAllExpenses.setOnClickListener(v -> showAllExpenses());
@@ -283,6 +294,7 @@ public class BudgetFragment extends Fragment {
 
                         updateBudgetDisplay();
                         updateCategoryDisplay();
+                        updatePieChart();
                         updateRecentExpensesDisplay();
                     }
 
@@ -336,6 +348,94 @@ public class BudgetFragment extends Fragment {
         textViewFoodAmount.setText("₩" + numberFormat.format(categoryExpenses.get("식비")));
         textViewTourismAmount.setText("₩" + numberFormat.format(categoryExpenses.get("관광")));
         textViewOtherAmount.setText("₩" + numberFormat.format(categoryExpenses.get("기타")));
+    }
+
+    private void updatePieChart() {
+        if (pieChart == null) return;
+
+        List<PieEntry> entries = new ArrayList<>();
+        List<Integer> colors = new ArrayList<>();
+
+        // 카테고리별 색상 정의
+        int[] CATEGORY_COLORS = {
+                Color.parseColor("#FF5722"), // 숙박 - 빨강
+                Color.parseColor("#2196F3"), // 교통 - 파랑
+                Color.parseColor("#4CAF50"), // 식비 - 초록
+                Color.parseColor("#FF9800"), // 관광 - 주황
+                Color.parseColor("#9C27B0")  // 기타 - 보라
+        };
+
+        // 지출이 있는 카테고리만 차트에 추가
+        for (int i = 0; i < EXPENSE_CATEGORIES.length; i++) {
+            String category = EXPENSE_CATEGORIES[i];
+            int amount = categoryExpenses.get(category);
+
+            if (amount > 0) {
+                // 카테고리명에 이모지 포함
+                String label = CATEGORY_EMOJIS[i] + " " + category;
+                entries.add(new PieEntry(amount, label));
+                colors.add(CATEGORY_COLORS[i]);
+            }
+        }
+
+        if (entries.isEmpty()) {
+            // 지출이 없는 경우
+            entries.add(new PieEntry(100, "지출 없음"));
+            colors.add(Color.parseColor("#E0E0E0"));
+        }
+
+        // 데이터셋 생성
+        PieDataSet dataSet = new PieDataSet(entries, "");
+        dataSet.setColors(colors);
+        dataSet.setValueTextSize(12f);
+        dataSet.setValueTextColor(Color.WHITE);
+        dataSet.setValueFormatter(new PercentFormatter(pieChart));
+
+        // 슬라이스 간격과 효과 설정
+        dataSet.setSliceSpace(3f);
+        dataSet.setSelectionShift(8f);
+
+        // 데이터 설정
+        PieData data = new PieData(dataSet);
+        pieChart.setData(data);
+
+        // 차트 새로고침
+        pieChart.invalidate();
+
+        // 애니메이션 효과
+        pieChart.animateY(1000);
+    }
+
+    private void setupPieChart() {
+        if (pieChart == null) return;
+
+        // 차트 기본 설정
+        pieChart.setUsePercentValues(true);
+        pieChart.setDrawHoleEnabled(true);
+        pieChart.setHoleColor(Color.WHITE);
+        pieChart.setHoleRadius(45f);
+        pieChart.setTransparentCircleRadius(50f);
+        pieChart.setDrawCenterText(true);
+        pieChart.setCenterText("💰\n지출 비율");
+        pieChart.setCenterTextSize(14f);
+        pieChart.setCenterTextColor(Color.parseColor("#333333"));
+        pieChart.setRotationAngle(0);
+        pieChart.setRotationEnabled(true);
+        pieChart.setHighlightPerTapEnabled(true);
+
+        // 설명 제거
+        Description description = new Description();
+        description.setText("");
+        pieChart.setDescription(description);
+
+        // 범례 설정
+        Legend legend = pieChart.getLegend();
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        legend.setDrawInside(false);
+        legend.setTextSize(10f);
+        legend.setEnabled(false); // 범례 숨기기 (아래 리스트가 있으니까)
     }
 
     private void updateRecentExpensesDisplay() {
@@ -650,37 +750,6 @@ public class BudgetFragment extends Fragment {
                         Toast.makeText(getContext(), "예산 설정 실패", Toast.LENGTH_SHORT).show());
     }
 
-    private void showExpenseChart() {
-        if (selectedTravel == null) {
-            Toast.makeText(getContext(), "먼저 여행을 선택하세요", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // 간단한 차트 정보를 대화상자로 표시
-        StringBuilder chartInfo = new StringBuilder();
-        chartInfo.append("📊 카테고리별 지출 현황\n\n");
-
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.KOREA);
-
-        for (int i = 0; i < EXPENSE_CATEGORIES.length; i++) {
-            String category = EXPENSE_CATEGORIES[i];
-            int amount = categoryExpenses.get(category);
-            double percentage = totalUsed > 0 ? (amount * 100.0 / totalUsed) : 0;
-
-            chartInfo.append(String.format("%s %s: ₩%s (%.1f%%)\n",
-                    CATEGORY_EMOJIS[i], category,
-                    numberFormat.format(amount), percentage));
-        }
-
-        chartInfo.append(String.format("\n💰 총 지출: ₩%s", numberFormat.format(totalUsed)));
-
-        new AlertDialog.Builder(requireContext())
-                .setTitle("지출 차트")
-                .setMessage(chartInfo.toString())
-                .setPositiveButton("확인", null)
-                .show();
-    }
-
     private void showAllExpenses() {
         if (selectedTravel == null) {
             Toast.makeText(getContext(), "먼저 여행을 선택하세요", Toast.LENGTH_SHORT).show();
@@ -723,6 +792,7 @@ public class BudgetFragment extends Fragment {
 
         updateBudgetDisplay();
         updateCategoryDisplay();
+        updatePieChart();
         updateRecentExpensesDisplay();
     }
 
