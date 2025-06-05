@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Colors -->
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#1976D2</color>
+    <color name="colorAccent">#4CAF50</color>
+
+    <!-- Background Colors -->
+    <color name="backgroundColor">#F5F5F5</color>
+    <color name="cardBackground">#FFFFFF</color>
+
+    <!-- Text Colors -->
+    <color name="textPrimary">#333333</color>
+    <color name="textSecondary">#666666</color>
+    <color name="textHint">#999999</color>
+
+    <!-- Border Colors -->
+    <color name="borderNormal">#E0E0E0</color>
+    <color name="borderFocus">#2196F3</color>
+    <color name="borderError">#F44336</color>
+
+    <!-- Button Colors -->
+    <color name="buttonPrimary">#2196F3</color>
+    <color name="buttonPrimaryPressed">#1976D2</color>
+    <color name="buttonDisabled">#BDBDBD</color>
+
+    <!-- Status Colors -->
+    <color name="errorColor">#F44336</color>
+    <color name="successColor">#4CAF50</color>
+    <color name="warningColor">#FF9800</color>
+
+    <!-- Bottom Navigation Colors -->
+    <color name="bottomNavSelected">#2196F3</color>
+    <color name="bottomNavUnselected">#757575</color>
+</resources>

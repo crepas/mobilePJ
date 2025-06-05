@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- 상단 헤더 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="16dp"
+            android:background="#FFFFFF"
+            android:elevation="2dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:id="@+id/textViewWelcome"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="사용자님, 환영합니다!"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#333333" />
+
+            <Button
+                android:id="@+id/buttonLogout"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="로그아웃"
+                android:textSize="12sp"
+                android:background="@drawable/button_outline_background"
+                android:textColor="#2196F3" />
+
+        </LinearLayout>
+
+        <!-- 다가오는 여행 일정 섹션 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#FFFFFF"
+            android:padding="20dp"
+            android:elevation="2dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📅 다가오는 여행"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#2196F3"
+                android:layout_marginBottom="12dp" />
+
+            <LinearLayout
+                android:id="@+id/layoutUpcomingTrips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- 다가오는 여행이 없을 때 -->
+                <TextView
+                    android:id="@+id/textViewNoUpcomingTrips"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="계획된 여행이 없습니다"
+                    android:textSize="14sp"
+                    android:textColor="#999999"
+                    android:padding="8dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- 최근 여행 목록 섹션 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#FFFFFF"
+            android:padding="20dp"
+            android:elevation="2dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🏖️ 최근 여행"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#4CAF50"
+                android:layout_marginBottom="12dp" />
+
+            <LinearLayout
+                android:id="@+id/layoutRecentTrips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- 최근 여행이 없을 때 -->
+                <TextView
+                    android:id="@+id/textViewNoRecentTrips"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="최근 여행이 없습니다"
+                    android:textSize="14sp"
+                    android:textColor="#999999"
+                    android:padding="8dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- 퀵 액세스 버튼들 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#FFFFFF"
+            android:padding="20dp"
+            android:elevation="2dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⚡ 퀵 액세스"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#FF5722"
+                android:layout_marginBottom="16dp" />
+
+            <!-- 첫 번째 줄 버튼들 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <Button
+                    android:id="@+id/buttonQuickSchedule"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="일정 관리"
+                    android:textSize="14sp"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/button_background"
+                    android:layout_marginEnd="8dp"
+                    android:drawableLeft="@drawable/ic_schedule"
+                    android:drawablePadding="8dp"
+                    android:gravity="center" />
+
+                <Button
+                    android:id="@+id/buttonQuickMap"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="지도 보기"
+                    android:textSize="14sp"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/button_outline_background"
+                    android:layout_marginStart="8dp"
+                    android:drawableLeft="@drawable/ic_map"
+                    android:drawablePadding="8dp"
+                    android:gravity="center" />
+
+            </LinearLayout>
+
+            <!-- 두 번째 줄 버튼들 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/buttonQuickBudget"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="예산 관리"
+                    android:textSize="14sp"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/button_outline_background"
+                    android:layout_marginEnd="8dp"
+                    android:drawableLeft="@drawable/ic_budget"
+                    android:drawablePadding="8dp"
+                    android:gravity="center" />
+
+                <Button
+                    android:id="@+id/buttonQuickMyPage"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="마이페이지"
+                    android:textSize="14sp"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/button_outline_background"
+                    android:layout_marginStart="8dp"
+                    android:drawableLeft="@drawable/ic_mypage"
+                    android:drawablePadding="8dp"
+                    android:gravity="center" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- 새 여행 생성 버튼 -->
+        <Button
+            android:id="@+id/buttonNewTrip"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="+ 새 여행 계획 만들기"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/button_background"
+            android:layout_marginBottom="16dp" />
+
+        <!-- 하단 상태 메시지 -->
+        <TextView
+            android:id="@+id/textViewStats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="총 0개의 여행을 계획하셨습니다"
+            android:textSize="14sp"
+            android:textColor="#999999" />
+
+    </LinearLayout>
+
+</ScrollView>
