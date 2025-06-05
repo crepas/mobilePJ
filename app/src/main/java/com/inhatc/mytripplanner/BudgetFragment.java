@@ -85,6 +85,7 @@ public class BudgetFragment extends Fragment {
     private List<TravelItem> travelList = new ArrayList<>();
     private TravelItem selectedTravel;
     private Map<String, Integer> categoryExpenses = new HashMap<>();
+    private Map<String, Integer> categoryBudgets = new HashMap<>(); // 카테고리별 예산 저장
     private List<ExpenseItem> recentExpenses = new ArrayList<>();
     private int totalBudget = 0;
     private int totalUsed = 0;
@@ -167,6 +168,13 @@ public class BudgetFragment extends Fragment {
             categoryExpenses.clear();
             for (String category : EXPENSE_CATEGORIES) {
                 categoryExpenses.put(category, 0);
+            }
+
+            // 카테고리별 예산도 초기화 (필요시)
+            if (categoryBudgets.isEmpty()) {
+                for (String category : EXPENSE_CATEGORIES) {
+                    categoryBudgets.put(category, 0);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -327,6 +335,10 @@ public class BudgetFragment extends Fragment {
             if (selectedTravel == null) return;
 
             totalBudget = selectedTravel.budget;
+
+            // Firebase에서 카테고리별 예산 데이터 로드
+            loadCategoryBudgets();
+
             updateBudgetDisplay();
         } catch (Exception e) {
             e.printStackTrace();
@@ -860,11 +872,40 @@ public class BudgetFragment extends Fragment {
                 editTextTotalBudget.setText(String.valueOf(totalBudget));
             }
 
+            // 기존 카테고리별 예산 값 표시 (0이 아닌 값들만)
+            Integer accommodationBudget = categoryBudgets.get("숙박");
+            if (accommodationBudget != null && accommodationBudget > 0) {
+                editTextAccommodationBudget.setText(String.valueOf(accommodationBudget));
+            }
+
+            Integer transportBudget = categoryBudgets.get("교통");
+            if (transportBudget != null && transportBudget > 0) {
+                editTextTransportBudget.setText(String.valueOf(transportBudget));
+            }
+
+            Integer foodBudget = categoryBudgets.get("식비");
+            if (foodBudget != null && foodBudget > 0) {
+                editTextFoodBudget.setText(String.valueOf(foodBudget));
+            }
+
+            Integer tourismBudget = categoryBudgets.get("관광");
+            if (tourismBudget != null && tourismBudget > 0) {
+                editTextTourismBudget.setText(String.valueOf(tourismBudget));
+            }
+
+            Integer otherBudget = categoryBudgets.get("기타");
+            if (otherBudget != null && otherBudget > 0) {
+                editTextOtherBudget.setText(String.valueOf(otherBudget));
+            }
+
             // 카테고리 예산 합계 실시간 계산
             EditText[] categoryBudgetInputs = {
                     editTextAccommodationBudget, editTextTransportBudget,
                     editTextFoodBudget, editTextTourismBudget, editTextOtherBudget
             };
+
+            // 초기 카테고리 합계 계산
+            updateCategoryTotal(categoryBudgetInputs, textViewCategoryTotal);
 
             for (EditText input : categoryBudgetInputs) {
                 if (input != null) {
@@ -911,7 +952,7 @@ public class BudgetFragment extends Fragment {
                         return;
                     }
 
-                    saveBudget(newTotalBudget);
+                    saveBudget(newTotalBudget, categoryBudgetInputs);
                     dialog.dismiss();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -952,7 +993,7 @@ public class BudgetFragment extends Fragment {
         }
     }
 
-    private void saveBudget(int newBudget) {
+    private void saveBudget(int newBudget, EditText[] categoryInputs) {
         try {
             if (database == null || selectedTravel == null) return;
 
@@ -960,55 +1001,90 @@ public class BudgetFragment extends Fragment {
             final String selectedTravelId = selectedTravel.id;
             final int currentPosition = selectedTravelPosition;
 
+            // 카테고리별 예산 수집
+            Map<String, Object> budgetData = new HashMap<>();
+            budgetData.put("totalBudget", newBudget);
+
+            // 카테고리별 예산 저장
+            Map<String, Object> categoryBudgetData = new HashMap<>();
+            if (categoryInputs != null && categoryInputs.length == EXPENSE_CATEGORIES.length) {
+                for (int i = 0; i < EXPENSE_CATEGORIES.length; i++) {
+                    if (categoryInputs[i] != null) {
+                        String budgetStr = categoryInputs[i].getText().toString().trim();
+                        int budget = 0;
+                        if (!budgetStr.isEmpty()) {
+                            try {
+                                budget = Integer.parseInt(budgetStr);
+                            } catch (NumberFormatException e) {
+                                budget = 0;
+                            }
+                        }
+                        categoryBudgetData.put(EXPENSE_CATEGORIES[i], budget);
+                        categoryBudgets.put(EXPENSE_CATEGORIES[i], budget);
+                    }
+                }
+            }
+            budgetData.put("categoryBudgets", categoryBudgetData);
+
+            // Firebase에 저장
             database.child("travels").child(selectedTravel.id).child("budget").setValue(newBudget)
                     .addOnSuccessListener(aVoid -> {
-                        try {
-                            // UI 업데이트를 안전하게 실행
-                            if (getActivity() != null && !getActivity().isFinishing()) {
-                                getActivity().runOnUiThread(() -> {
+                        // 카테고리별 예산도 저장
+                        database.child("travels").child(selectedTravelId).child("categoryBudgets").setValue(categoryBudgetData)
+                                .addOnSuccessListener(aVoid2 -> {
                                     try {
-                                        // 예산 업데이트
-                                        totalBudget = newBudget;
-                                        if (selectedTravel != null && selectedTravel.id.equals(selectedTravelId)) {
-                                            selectedTravel.budget = newBudget;
-                                        }
-
-                                        // 여행 리스트에서도 업데이트
-                                        for (TravelItem travel : travelList) {
-                                            if (travel.id.equals(selectedTravelId)) {
-                                                travel.budget = newBudget;
-                                                break;
-                                            }
-                                        }
-
-                                        // UI 업데이트 (스피너 선택 상태 유지)
-                                        updateBudgetDisplay();
-
-                                        // 스피너 선택 상태 복원 (약간의 지연을 두어 안정성 확보)
-                                        if (spinnerTravels != null && currentPosition > 0) {
-                                            spinnerTravels.post(() -> {
+                                        // UI 업데이트를 안전하게 실행
+                                        if (getActivity() != null && !getActivity().isFinishing()) {
+                                            getActivity().runOnUiThread(() -> {
                                                 try {
-                                                    if (currentPosition < spinnerTravels.getAdapter().getCount()) {
-                                                        selectedTravelPosition = currentPosition;
-                                                        spinnerTravels.setSelection(currentPosition);
+                                                    // 예산 업데이트
+                                                    totalBudget = newBudget;
+                                                    if (selectedTravel != null && selectedTravel.id.equals(selectedTravelId)) {
+                                                        selectedTravel.budget = newBudget;
+                                                    }
+
+                                                    // 여행 리스트에서도 업데이트
+                                                    for (TravelItem travel : travelList) {
+                                                        if (travel.id.equals(selectedTravelId)) {
+                                                            travel.budget = newBudget;
+                                                            break;
+                                                        }
+                                                    }
+
+                                                    // UI 업데이트 (스피너 선택 상태 유지)
+                                                    updateBudgetDisplay();
+
+                                                    // 스피너 선택 상태 복원 (약간의 지연을 두어 안정성 확보)
+                                                    if (spinnerTravels != null && currentPosition > 0) {
+                                                        spinnerTravels.post(() -> {
+                                                            try {
+                                                                if (currentPosition < spinnerTravels.getAdapter().getCount()) {
+                                                                    selectedTravelPosition = currentPosition;
+                                                                    spinnerTravels.setSelection(currentPosition);
+                                                                }
+                                                            } catch (Exception e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                        });
+                                                    }
+
+                                                    if (getContext() != null) {
+                                                        Toast.makeText(getContext(), "예산이 설정되었습니다", Toast.LENGTH_SHORT).show();
                                                     }
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
                                                 }
                                             });
                                         }
-
-                                        if (getContext() != null) {
-                                            Toast.makeText(getContext(), "예산이 설정되었습니다", Toast.LENGTH_SHORT).show();
-                                        }
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
+                                })
+                                .addOnFailureListener(e -> {
+                                    if (getContext() != null) {
+                                        Toast.makeText(getContext(), "카테고리 예산 저장 실패", Toast.LENGTH_SHORT).show();
+                                    }
                                 });
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
                     })
                     .addOnFailureListener(e -> {
                         try {
@@ -1092,6 +1168,53 @@ public class BudgetFragment extends Fragment {
             return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
         } catch (Exception e) {
             return "";
+        }
+    }
+
+    private void loadCategoryBudgets() {
+        try {
+            if (database == null || selectedTravel == null) return;
+
+            database.child("travels").child(selectedTravel.id).child("categoryBudgets")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            try {
+                                categoryBudgets.clear();
+
+                                // 기본값으로 초기화
+                                for (String category : EXPENSE_CATEGORIES) {
+                                    categoryBudgets.put(category, 0);
+                                }
+
+                                // Firebase에서 저장된 값 불러오기
+                                if (dataSnapshot.exists()) {
+                                    for (String category : EXPENSE_CATEGORIES) {
+                                        Object budgetObj = dataSnapshot.child(category).getValue();
+                                        if (budgetObj instanceof Number) {
+                                            categoryBudgets.put(category, ((Number) budgetObj).intValue());
+                                        }
+                                    }
+                                }
+
+                                // UI 업데이트가 필요한 경우 (예산 설정 다이얼로그가 열려있는 경우를 대비)
+                                // 이 부분은 다이얼로그가 열릴 때 자동으로 처리됩니다.
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // 오류 발생 시 기본값으로 초기화
+                            categoryBudgets.clear();
+                            for (String category : EXPENSE_CATEGORIES) {
+                                categoryBudgets.put(category, 0);
+                            }
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
