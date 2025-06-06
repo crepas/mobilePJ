@@ -22,9 +22,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -33,14 +35,10 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class HomeFragment extends Fragment {
 
-    private TextView textViewWelcome;
     private TextView textViewStats;
-    private TextView textViewNoUpcomingTrips;
-    private TextView textViewNoRecentTrips;
     private LinearLayout layoutUpcomingTrips;
-    private LinearLayout layoutRecentTrips;
+    private TextView textViewNoUpcomingTrips;
     private Button buttonNewTrip;
-    private Button buttonLogout;
     private Button buttonQuickSchedule;
     private Button buttonQuickMap;
     private Button buttonQuickBudget;
@@ -56,7 +54,6 @@ public class HomeFragment extends Fragment {
 
     // 여행 데이터
     private List<TravelItem> upcomingTrips = new ArrayList<>();
-    private List<TravelItem> recentTrips = new ArrayList<>();
 
     @Nullable
     @Override
@@ -117,12 +114,9 @@ public class HomeFragment extends Fragment {
 
     private void initViews(View view) {
         try {
-            textViewWelcome = view.findViewById(R.id.textViewWelcome);
             textViewStats = view.findViewById(R.id.textViewStats);
             layoutUpcomingTrips = view.findViewById(R.id.layoutUpcomingTrips);
-            layoutRecentTrips = view.findViewById(R.id.layoutRecentTrips);
             buttonNewTrip = view.findViewById(R.id.buttonNewTrip);
-            buttonLogout = view.findViewById(R.id.buttonLogout);
 
             // 퀵 액세스 버튼들 - null 체크
             buttonQuickSchedule = view.findViewById(R.id.buttonQuickSchedule);
@@ -130,9 +124,8 @@ public class HomeFragment extends Fragment {
             buttonQuickBudget = view.findViewById(R.id.buttonQuickBudget);
             buttonQuickMyPage = view.findViewById(R.id.buttonQuickMyPage);
 
-            // "데이터 없음" 텍스트뷰들 - null 체크
+            // "데이터 없음" 텍스트뷰
             textViewNoUpcomingTrips = view.findViewById(R.id.textViewNoUpcomingTrips);
-            textViewNoRecentTrips = view.findViewById(R.id.textViewNoRecentTrips);
 
             updateWelcomeMessage();
         } catch (Exception e) {
@@ -145,11 +138,6 @@ public class HomeFragment extends Fragment {
             // 새 여행 계획 버튼
             if (buttonNewTrip != null) {
                 buttonNewTrip.setOnClickListener(v -> handleNewTripClick());
-            }
-
-            // 로그아웃 버튼
-            if (buttonLogout != null) {
-                buttonLogout.setOnClickListener(v -> showLogoutDialog());
             }
 
             // 퀵 액세스 버튼들 - null 체크 추가
@@ -241,9 +229,8 @@ public class HomeFragment extends Fragment {
 
     private void updateWelcomeMessage() {
         try {
-            if (textViewWelcome != null && currentUserName != null) {
-                textViewWelcome.setText(currentUserName + "님, 환영합니다!");
-            }
+            // 이제 환영 메시지는 updateUI()에서 동적으로 생성됨
+            // 별도의 textViewWelcome은 사용하지 않음
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -253,7 +240,7 @@ public class HomeFragment extends Fragment {
         try {
             if (currentUserId.isEmpty() || database == null) return;
 
-            // 사용자의 모든 여행 데이터 가져오기
+            // 사용자의 다가오는 여행 데이터만 가져오기
             database.child("travels")
                     .orderByChild("userId")
                     .equalTo(currentUserId)
@@ -262,7 +249,6 @@ public class HomeFragment extends Fragment {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             try {
                                 upcomingTrips.clear();
-                                recentTrips.clear();
 
                                 Date currentDate = new Date();
 
@@ -282,21 +268,27 @@ public class HomeFragment extends Fragment {
                                         travel.budget = 0;
                                     }
 
-                                    // 날짜가 있는 여행만 분류
+                                    // 다가오는 여행만 필터링
                                     if (travel.startDate != null && !travel.startDate.isEmpty()) {
                                         Date startDate = parseDate(travel.startDate);
-                                        if (startDate != null) {
-                                            if (startDate.after(currentDate)) {
-                                                upcomingTrips.add(travel);
-                                            } else {
-                                                recentTrips.add(travel);
-                                            }
+                                        if (startDate != null && startDate.after(currentDate)) {
+                                            upcomingTrips.add(travel);
                                         }
                                     }
                                 }
 
-                                // 안전한 정렬
-                                sortTrips();
+                                // 날짜 순으로 정렬 (가까운 것부터)
+                                upcomingTrips.sort((t1, t2) -> {
+                                    try {
+                                        Date d1 = parseDate(t1.startDate);
+                                        Date d2 = parseDate(t2.startDate);
+                                        if (d1 == null || d2 == null) return 0;
+                                        return d1.compareTo(d2);
+                                    } catch (Exception e) {
+                                        return 0;
+                                    }
+                                });
+
                                 updateUI();
 
                             } catch (Exception e) {
@@ -317,80 +309,84 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void sortTrips() {
-        try {
-            // 다가오는 여행은 날짜 순으로 정렬 (가까운 것부터)
-            upcomingTrips.sort((t1, t2) -> {
-                try {
-                    Date d1 = parseDate(t1.startDate);
-                    Date d2 = parseDate(t2.startDate);
-                    if (d1 == null || d2 == null) return 0;
-                    return d1.compareTo(d2);
-                } catch (Exception e) {
-                    return 0;
-                }
-            });
-
-            // 최근 여행은 날짜 역순으로 정렬 (최근 것부터)
-            recentTrips.sort((t1, t2) -> {
-                try {
-                    Date d1 = parseDate(t1.startDate);
-                    Date d2 = parseDate(t2.startDate);
-                    if (d1 == null || d2 == null) return 0;
-                    return d2.compareTo(d1);
-                } catch (Exception e) {
-                    return 0;
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     private void updateUI() {
         try {
             if (getContext() == null) return;
 
-            // 통계 업데이트
-            int totalTrips = upcomingTrips.size() + recentTrips.size();
-            if (textViewStats != null) {
-                textViewStats.setText("총 " + totalTrips + "개의 여행을 계획하셨습니다");
+            // 통계 정보를 날짜 + 환영 메시지로 변경
+            if (textViewStats != null && currentUserName != null) {
+                // 현재 날짜 가져오기
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 M월 d일 EEEE", Locale.KOREA);
+                String currentDate = sdf.format(new Date());
+
+                // 시간대별 인사말
+                Calendar calendar = Calendar.getInstance();
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                String greeting;
+                String emoji;
+
+                if (hour >= 6 && hour < 12) {
+                    greeting = "좋은 아침이에요";
+                    emoji = "🌅";
+                } else if (hour >= 12 && hour < 18) {
+                    greeting = "좋은 오후에요";
+                    emoji = "☀️";
+                } else if (hour >= 18 && hour < 22) {
+                    greeting = "좋은 저녁이에요";
+                    emoji = "🌆";
+                } else {
+                    greeting = "좋은 밤이에요";
+                    emoji = "🌙";
+                }
+
+                String welcomeText = "📅 " + currentDate + "\n" +
+                        currentUserName + "님, 환영합니다! " + emoji + "\n" +
+                        greeting + "!";
+
+                textViewStats.setText(welcomeText);
             }
 
-            // 다가오는 여행 업데이트
+            // 다가오는 여행 목록 업데이트
             if (layoutUpcomingTrips != null) {
                 layoutUpcomingTrips.removeAllViews();
+
+                // 다가오는 여행 헤더 추가
+                TextView tripHeader = new TextView(getContext());
+                if (upcomingTrips.isEmpty()) {
+                    tripHeader.setText("다가오는 여행이 없습니다 ✈️");
+                } else {
+                    tripHeader.setText("다가오는 여행 " + upcomingTrips.size() + "개 ✈️");
+                }
+                tripHeader.setTextSize(16);
+                tripHeader.setTextColor(getResources().getColor(android.R.color.black));
+                tripHeader.setTypeface(null, android.graphics.Typeface.BOLD);
+                tripHeader.setPadding(16, 16, 16, 12);
+                layoutUpcomingTrips.addView(tripHeader);
+
                 if (upcomingTrips.isEmpty()) {
                     if (textViewNoUpcomingTrips != null) {
                         layoutUpcomingTrips.addView(textViewNoUpcomingTrips);
                     }
                 } else {
-                    // 최대 2개까지만 표시
-                    int maxUpcoming = Math.min(upcomingTrips.size(), 2);
+                    // 최대 3개까지만 표시
+                    int maxUpcoming = Math.min(upcomingTrips.size(), 3);
                     for (int i = 0; i < maxUpcoming; i++) {
-                        View tripView = createTripItemView(upcomingTrips.get(i), true);
+                        View tripView = createTripItemView(upcomingTrips.get(i));
                         if (tripView != null) {
                             layoutUpcomingTrips.addView(tripView);
                         }
                     }
-                }
-            }
 
-            // 최근 여행 업데이트
-            if (layoutRecentTrips != null) {
-                layoutRecentTrips.removeAllViews();
-                if (recentTrips.isEmpty()) {
-                    if (textViewNoRecentTrips != null) {
-                        layoutRecentTrips.addView(textViewNoRecentTrips);
-                    }
-                } else {
-                    // 최대 2개까지만 표시
-                    int maxRecent = Math.min(recentTrips.size(), 2);
-                    for (int i = 0; i < maxRecent; i++) {
-                        View tripView = createTripItemView(recentTrips.get(i), false);
-                        if (tripView != null) {
-                            layoutRecentTrips.addView(tripView);
-                        }
+                    // 더 많은 여행이 있으면 "더 보기" 버튼 추가
+                    if (upcomingTrips.size() > 3) {
+                        Button moreButton = new Button(getContext());
+                        moreButton.setText("+" + (upcomingTrips.size() - 3) + "개 더 보기");
+                        moreButton.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+                        moreButton.setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
+                        moreButton.setOnClickListener(v -> {
+                            Toast.makeText(getContext(), "전체 여행 목록 화면 (개발 예정)", Toast.LENGTH_SHORT).show();
+                        });
+                        layoutUpcomingTrips.addView(moreButton);
                     }
                 }
             }
@@ -399,54 +395,77 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private View createTripItemView(TravelItem travel, boolean isUpcoming) {
+    private View createTripItemView(TravelItem travel) {
         try {
             if (getContext() == null) return null;
 
             LinearLayout itemLayout = new LinearLayout(getContext());
             itemLayout.setOrientation(LinearLayout.VERTICAL);
             itemLayout.setBackgroundColor(getResources().getColor(android.R.color.white));
-            itemLayout.setPadding(16, 12, 16, 12);
+            itemLayout.setPadding(20, 16, 20, 16);
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
-            params.setMargins(0, 0, 0, 8);
+            params.setMargins(0, 0, 0, 12);
             itemLayout.setLayoutParams(params);
 
-            // 여행 제목
+            // 상단: 여행 제목과 D-day
+            LinearLayout topLayout = new LinearLayout(getContext());
+            topLayout.setOrientation(LinearLayout.HORIZONTAL);
+            topLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            ));
+
             TextView titleView = new TextView(getContext());
             titleView.setText(travel.title != null ? travel.title : "제목 없음");
             titleView.setTextSize(16);
             titleView.setTextColor(getResources().getColor(android.R.color.black));
+            LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
+                    0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f
+            );
+            titleView.setLayoutParams(titleParams);
+
+            TextView ddayView = new TextView(getContext());
+            String ddayText = getDdayText(travel.startDate);
+            ddayView.setText(ddayText);
+            ddayView.setTextSize(14);
+            ddayView.setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
+            ddayView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+
+            topLayout.addView(titleView);
+            topLayout.addView(ddayView);
 
             // 여행 날짜
             TextView dateView = new TextView(getContext());
             String dateText = "";
             if (travel.startDate != null && !travel.startDate.isEmpty()) {
                 if (travel.endDate != null && !travel.endDate.isEmpty()) {
-                    dateText = travel.startDate + " ~ " + travel.endDate;
+                    dateText = "📅 " + travel.startDate + " ~ " + travel.endDate;
                 } else {
-                    dateText = travel.startDate;
+                    dateText = "📅 " + travel.startDate;
                 }
             }
             dateView.setText(dateText);
             dateView.setTextSize(14);
             dateView.setTextColor(getResources().getColor(android.R.color.darker_gray));
+            dateView.setPadding(0, 4, 0, 0);
 
             // 예산 정보
             TextView budgetView = new TextView(getContext());
             if (travel.budget > 0) {
-                budgetView.setText("예산: " + String.format("%,d원", travel.budget));
+                NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.KOREA);
+                budgetView.setText("💰 예산: ₩" + numberFormat.format(travel.budget));
             } else {
-                budgetView.setText("예산: 미설정");
+                budgetView.setText("💰 예산: 미설정");
             }
-            budgetView.setTextSize(12);
-            budgetView.setTextColor(getResources().getColor(isUpcoming ?
-                    android.R.color.holo_blue_dark : android.R.color.holo_green_dark));
+            budgetView.setTextSize(13);
+            budgetView.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+            budgetView.setPadding(0, 2, 0, 0);
 
-            itemLayout.addView(titleView);
+            itemLayout.addView(topLayout);
             itemLayout.addView(dateView);
             itemLayout.addView(budgetView);
 
@@ -462,6 +481,29 @@ public class HomeFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    private String getDdayText(String startDate) {
+        try {
+            if (startDate == null || startDate.isEmpty()) return "";
+
+            Date start = parseDate(startDate);
+            if (start == null) return "";
+
+            Date today = new Date();
+            long diffTime = start.getTime() - today.getTime();
+            long diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+            if (diffDays == 0) {
+                return "D-Day! 🎉";
+            } else if (diffDays > 0) {
+                return "D-" + diffDays;
+            } else {
+                return "진행 중";
+            }
+        } catch (Exception e) {
+            return "";
         }
     }
 
@@ -520,7 +562,7 @@ public class HomeFragment extends Fragment {
             database.child("travels").child(travelId).setValue(travelData)
                     .addOnSuccessListener(aVoid -> {
                         if (getContext() != null) {
-                            Toast.makeText(getContext(), "새 여행이 생성되었습니다!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "새 여행이 생성되었습니다! ✨", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnFailureListener(e -> {
@@ -528,21 +570,6 @@ public class HomeFragment extends Fragment {
                             Toast.makeText(getContext(), "여행 생성에 실패했습니다.", Toast.LENGTH_SHORT).show();
                         }
                     });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void showLogoutDialog() {
-        try {
-            if (getContext() != null) {
-                new androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                        .setTitle("로그아웃")
-                        .setMessage("정말 로그아웃 하시겠습니까?")
-                        .setPositiveButton("예", (dialog, which) -> logout())
-                        .setNegativeButton("아니오", null)
-                        .show();
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -2,7 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="#F5F5F5"
+    android:fitsSystemWindows="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -10,35 +11,27 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- 상단 헤더 -->
+        <!-- 상단 헤더 - 환영 메시지 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="16dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="20dp"
             android:background="#FFFFFF"
-            android:elevation="2dp"
+            android:elevation="4dp"
             android:layout_marginBottom="24dp">
 
             <TextView
-                android:id="@+id/textViewWelcome"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="사용자님, 환영합니다!"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#333333" />
-
-            <Button
-                android:id="@+id/buttonLogout"
+                android:id="@+id/textViewStats"
                 android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:text="로그아웃"
-                android:textSize="12sp"
-                android:background="@drawable/button_outline_background"
-                android:textColor="#FFFFFF" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="📅 2025년 6월 6일 금요일\ntest님, 환영합니다! 🌙\n좋은 저녁이에요!"
+                android:textSize="16sp"
+                android:textColor="#333333"
+                android:textAlignment="center"
+                android:lineSpacingExtra="4dp" />
 
         </LinearLayout>
 
@@ -225,16 +218,6 @@
             android:textColor="#FFFFFF"
             android:background="@drawable/button_background"
             android:layout_marginBottom="16dp" />
-
-        <!-- 하단 상태 메시지 -->
-        <TextView
-            android:id="@+id/textViewStats"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="총 0개의 여행을 계획하셨습니다"
-            android:textSize="14sp"
-            android:textColor="#999999" />
 
     </LinearLayout>
 
