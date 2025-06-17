@@ -1,80 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="32dp"
-    android:background="#F5F5F5">
+    android:fitsSystemWindows="true">
 
-    <!-- 이모지 아이콘 -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="📅"
-        android:textSize="80sp"
-        android:layout_marginBottom="24dp" />
+    <!-- Google Map -->
+    <fragment
+        android:id="@+id/mapView"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-    <!-- 제목 -->
-    <TextView
-        android:id="@+id/textViewTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="일정"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:textColor="#FF5722"
-        android:layout_marginBottom="8dp" />
-
-    <!-- 부제목 -->
-    <TextView
-        android:id="@+id/textViewSubtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="여행 일정 관리"
-        android:textSize="16sp"
-        android:textColor="#666666"
-        android:layout_marginBottom="24dp" />
-
-    <!-- 개발 예정 표시 -->
-    <LinearLayout
+    <!-- 검색창 -->
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#FFFFFF"
-        android:padding="24dp"
-        android:elevation="4dp"
-        android:layout_marginBottom="16dp">
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="top"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="#FFFFFF">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="🚧 개발 예정 🚧"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#FF9800"
-            android:layout_gravity="center"
-            android:layout_marginBottom="16dp" />
-
-        <TextView
-            android:id="@+id/textViewDescription"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="이 기능은 곧 개발될 예정입니다!"
-            android:textSize="14sp"
-            android:textColor="#666666"
-            android:gravity="center"
-            android:lineSpacingExtra="4dp" />
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center_vertical"
+            android:minHeight="56dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🔍"
+                android:textSize="20sp"
+                android:layout_marginEnd="12dp" />
+
+            <EditText
+                android:id="@+id/searchEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="장소를 검색하세요 (예: 경복궁, 홍대입구역)"
+                android:background="@android:color/transparent"
+                android:textSize="16sp"
+                android:textColor="#333333"
+                android:textColorHint="#999999"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- 컨트롤 버튼들 -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="32dp"
+        android:orientation="vertical"
+        android:gravity="end">
+
+        <!-- 경로 삭제 버튼 -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabClearRoute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/ic_clear"
+            android:backgroundTint="#F44336"
+            android:contentDescription="경로 삭제"
+            app:tint="@android:color/white"
+            app:fabSize="mini" />
+
+        <!-- 내 위치 버튼 -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabMyLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_my_location"
+            android:backgroundTint="#2196F3"
+            android:contentDescription="내 위치"
+            app:tint="@android:color/white" />
 
     </LinearLayout>
 
-    <!-- 하단 메시지 -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="완벽한 일정 관리 기능을 준비 중입니다! ⏰"
-        android:textSize="14sp"
-        android:textColor="#999999"
-        android:layout_marginTop="16dp" />
-
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

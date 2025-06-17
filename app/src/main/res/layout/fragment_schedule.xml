@@ -1,80 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="32dp"
-    android:background="#F5F5F5">
+    android:background="#F5F5F5"
+    android:fitsSystemWindows="true">
 
-    <!-- 이모지 아이콘 -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="📅"
-        android:textSize="80sp"
-        android:layout_marginBottom="24dp" />
-
-    <!-- 제목 -->
-    <TextView
-        android:id="@+id/textViewTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="일정"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:textColor="#FF5722"
-        android:layout_marginBottom="8dp" />
-
-    <!-- 부제목 -->
-    <TextView
-        android:id="@+id/textViewSubtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="여행 일정 관리"
-        android:textSize="16sp"
-        android:textColor="#666666"
-        android:layout_marginBottom="24dp" />
-
-    <!-- 개발 예정 표시 -->
-    <LinearLayout
+    <!-- 메인 여행 목록 화면 -->
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#FFFFFF"
-        android:padding="24dp"
-        android:elevation="4dp"
-        android:layout_marginBottom="16dp">
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="🚧 개발 예정 🚧"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#FF9800"
-            android:layout_gravity="center"
-            android:layout_marginBottom="16dp" />
-
-        <TextView
-            android:id="@+id/textViewDescription"
+        <!-- 메인 컨텐츠 -->
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="이 기능은 곧 개발될 예정입니다!"
-            android:textSize="14sp"
-            android:textColor="#666666"
-            android:gravity="center"
-            android:lineSpacingExtra="4dp" />
+            android:layout_height="match_parent">
 
-    </LinearLayout>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-    <!-- 하단 메시지 -->
-    <TextView
+                <!-- 여행 목록 -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewTravels"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="16dp"
+                    android:clipToPadding="false"
+                    android:scrollbars="vertical" />
+
+                <!-- 빈 화면 -->
+                <LinearLayout
+                    android:id="@+id/emptyView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="32dp"
+                    android:background="#F5F5F5"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📅"
+                        android:textSize="80sp"
+                        android:layout_marginBottom="24dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="일정이 없습니다"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:textColor="#FF5722"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="새로운 여행을 계획해보세요"
+                        android:textSize="16sp"
+                        android:textColor="#666666"
+                        android:layout_marginBottom="24dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="#FFFFFF"
+                        android:padding="24dp"
+                        android:elevation="4dp"
+                        android:layout_marginBottom="16dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="✈️ + 버튼을 눌러 새로운 여행을 추가하세요!\n📍 목적지와 날짜를 설정할 수 있어요\n🗺️ 지도에서 여행지를 확인해보세요"
+                            android:textSize="14sp"
+                            android:textColor="#666666"
+                            android:gravity="center"
+                            android:lineSpacingExtra="4dp" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="멋진 여행을 계획해보세요! 🌟"
+                        android:textSize="14sp"
+                        android:textColor="#999999"
+                        android:layout_marginTop="16dp" />
+
+                </LinearLayout>
+
+            </FrameLayout>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <!-- 여행 상세 일정 화면 -->
+        <LinearLayout
+            android:id="@+id/detailContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            android:background="#F5F5F5"
+            android:visibility="gone">
+
+            <!-- 상세 화면 헤더 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="#FFFFFF"
+                android:padding="16dp"
+                android:gravity="center_vertical"
+                android:elevation="4dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="✈️"
+                    android:textSize="24sp"
+                    android:layout_marginEnd="12dp" />
+
+                <TextView
+                    android:id="@+id/textViewTravelTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="제주도 여행 - 제주시"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#FF5722" />
+
+            </LinearLayout>
+
+            <!-- 날짜별 탭 -->
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayoutDays"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                app:tabMode="scrollable"
+                app:tabIndicatorColor="#FF5722"
+                app:tabSelectedTextColor="#FF5722"
+                app:tabTextColor="#666666" />
+
+            <!-- 날짜별 상세 내용 -->
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPagerDays"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <!-- 플로팅 액션 버튼 (메인 화면용) -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddTravel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="완벽한 일정 관리 기능을 준비 중입니다! ⏰"
-        android:textSize="14sp"
-        android:textColor="#999999"
-        android:layout_marginTop="16dp" />
+        android:layout_gravity="bottom|start"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_add"
+        android:backgroundTint="#FF5722"
+        android:contentDescription="여행 추가 또는 뒤로가기"
+        app:tint="@android:color/white" />
 
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

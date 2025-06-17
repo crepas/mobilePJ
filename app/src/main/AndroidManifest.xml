@@ -4,6 +4,12 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -15,6 +21,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyTripPlanner"
         tools:targetApi="31">
+
+        <!-- === Google Maps API 키 추가 === -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDSOKmlc9jRVf5Nw-Us8OWnsGTDgn-nGHc" />
 
         <!-- 로그인 화면 (앱 시작점) -->
         <activity
@@ -35,7 +46,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
-
 
 
     </application>
